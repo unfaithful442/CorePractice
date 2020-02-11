@@ -50,6 +50,10 @@ namespace CorePractice.Models
                     .IsRequired()
                     .HasMaxLength(128);
 
+                entity.Property(e => e.Salt)
+                 .IsRequired()
+                 .HasMaxLength(128);
+
                 entity.Property(e => e.Phone).HasMaxLength(50);
 
                 entity.Property(e => e.Username)

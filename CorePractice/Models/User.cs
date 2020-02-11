@@ -14,6 +14,7 @@ namespace CorePractice.Models
         public string Lastname { get; set; }
         public string Mobile { get; set; }
         public string Password { get; set; }
+        public string Salt { get; set; }
         public string Phone { get; set; }
         public string Username { get; set; }
         public List<UserGroup> UserGroups { get; set; }
