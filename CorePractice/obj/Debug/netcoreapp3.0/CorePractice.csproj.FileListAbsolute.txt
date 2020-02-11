@@ -109,4 +109,3 @@ C:\Users\RYZEN\Desktop\CorePractice\CorePractice\obj\Debug\netcoreapp3.0\CorePra
 C:\Users\RYZEN\Desktop\CorePractice\CorePractice\obj\Debug\netcoreapp3.0\CorePractice.csproj.CopyComplete
 C:\Users\RYZEN\Desktop\CorePractice\CorePractice\obj\Debug\netcoreapp3.0\CorePractice.dll
 C:\Users\RYZEN\Desktop\CorePractice\CorePractice\obj\Debug\netcoreapp3.0\CorePractice.pdb
-C:\Users\RYZEN\Desktop\CorePractice\CorePractice\obj\Debug\netcoreapp3.0\CorePractice.csprojAssemblyReference.cache

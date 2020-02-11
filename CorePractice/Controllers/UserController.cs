@@ -12,14 +12,13 @@ namespace CorePractice.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GroupController : ControllerBase
+    public class UserController : ControllerBase
     {
         private IMemoryCache _cache;
 
         private CorePracticeDbContext _db;
 
-        //inject db context and memory cache
-        public GroupController(IMemoryCache cache, CorePracticeDbContext db)
+        public UserController(IMemoryCache cache, CorePracticeDbContext db)
         {
             _cache = cache;
 
@@ -28,27 +27,27 @@ namespace CorePractice.Controllers
 
 
         [HttpGet]
-        public IActionResult GetGroups()
+        public IActionResult GetUsers()
         {
-            var Group = _db.Groups.OrderBy(m => m.GroupId).ToList();
+            var Users = _db.Users.OrderBy(m => m.UserId).ToList();
 
-            return Ok(Group);
+            return Ok(Users);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateGroup(Group group)
+        public async Task<IActionResult> CreateUser(User user)
         {
-            _db.Groups.Add(group);
+            _db.Users.Add(user);
 
             await _db.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(CreateGroup), group);
+            return CreatedAtAction(nameof(CreateUser), user);
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateGroup(Group group)
+        public async Task<IActionResult> UpdateGroup(User user)
         {
-            _db.Entry(group).State = EntityState.Modified;
+            _db.Entry(user).State = EntityState.Modified;
 
             try
             {
@@ -67,18 +66,18 @@ namespace CorePractice.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> DeleteGroup(int id)
         {
-            var Group = _db.Groups.Where<Group>(m => m.GroupId == id).FirstOrDefault();
+            var User = _db.Users.Where(m => m.UserId == id).FirstOrDefault();
 
-            if (Group == null)
+            if (User == null)
             {
                 return NotFound();
             }
 
-            _db.Groups.Remove(Group);
+            _db.Users.Remove(User);
 
             await _db.SaveChangesAsync();
 
-            return Ok(Group);
+            return Ok(User);
         }
     }
 }
