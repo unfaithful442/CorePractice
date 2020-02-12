@@ -37,15 +37,29 @@ namespace CorePractice.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser(User user)
         {
-            _db.Users.Add(user);
+            //check if username exist
+            var dbuser = _db.Users.Where(u => u.Username == user.Username).FirstOrDefault();
 
-            await _db.SaveChangesAsync();
+            //username doesnt exist
+            if (dbuser != null)
+            {
+                _db.Users.Add(user);
 
-            return CreatedAtAction(nameof(CreateUser), user);
+                await _db.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(CreateUser), user);
+            }
+            else
+            {
+                //username already exist
+
+                return Conflict(new { message = "Sorry, the Username has been used" });
+            }
+
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateGroup(User user)
+        public async Task<IActionResult> UpdateUser(User user)
         {
             _db.Entry(user).State = EntityState.Modified;
 
@@ -64,7 +78,7 @@ namespace CorePractice.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
-        public async Task<IActionResult> DeleteGroup(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
             var User = _db.Users.Where(m => m.UserId == id).FirstOrDefault();
 
@@ -78,6 +92,29 @@ namespace CorePractice.Controllers
             await _db.SaveChangesAsync();
 
             return Ok(User);
+        }
+
+        [HttpPost]
+        [Route("Group")]
+        public async Task<IActionResult> SetUserGroups(int id)
+        {
+
+
+            return Ok();
+        }
+
+
+        [HttpDelete]
+        [Route("Group/{id:int}")]
+        public async Task<IActionResult> DeleteUserGroups(int id)
+        {
+            var UserGroups = _db.UserGroups.Where(ug => ug.UserId == id).ToList();
+
+            _db.UserGroups.RemoveRange(UserGroups);
+
+            await _db.SaveChangesAsync();
+
+            return Ok(UserGroups);
         }
     }
 }
