@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using CorePractice.ViewModels;
+using CorePractice.Helpers;
 
 namespace CorePractice.Controllers
 {
@@ -20,6 +22,8 @@ namespace CorePractice.Controllers
         private CorePracticeDbContext _db;
 
         private IMapper _mapper;
+
+
         public UserController(IMemoryCache cache, CorePracticeDbContext db, IMapper mapper)
         {
             _cache = cache;
@@ -27,6 +31,7 @@ namespace CorePractice.Controllers
             _db = db;
 
             _mapper = mapper;
+
         }
 
 
@@ -39,44 +44,125 @@ namespace CorePractice.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser(User user)
+        public async Task<IActionResult> CreateUser(BackEndCreateUser backEndCreateUser)
         {
-            //check if username exist
-            var dbuser = _db.Users.Where(u => u.Username == user.Username).FirstOrDefault();
-
-            //username doesnt exist
-            if (dbuser != null)
+            //validate viewmodel
+            if (ModelState.IsValid)
             {
-                _db.Users.Add(user);
+                //check if username exist
+                var dbuser = _db.Users.Where(u => u.Username == backEndCreateUser.Username).FirstOrDefault();
 
-                await _db.SaveChangesAsync();
+                //username doesnt exist
+                if (dbuser != null)
+                {
+                    //encrypt pwd with salt
 
-                return CreatedAtAction(nameof(CreateUser), user);
+                    string salt = string.Empty;
+
+                    string encryptPassword = SecurityHelper.EncryptPassword(backEndCreateUser.Password, out salt);
+
+                    //map viewmodel to dbmodel
+                    var user = _mapper.Map<BackEndCreateUser, User>(backEndCreateUser);
+
+                    user.Salt = salt;
+
+                    user.Password = encryptPassword;
+
+                    _db.Users.Add(user);
+
+                    await _db.SaveChangesAsync();
+
+                    return CreatedAtAction(nameof(CreateUser), user);
+                }
+                else
+                {
+                    //username already exist
+
+                    return Conflict(new { message = "Sorry, the Username has been used" });
+                }
             }
             else
             {
-                //username already exist
+                var error = new
+                {
+                    message = "The request is invalid.",
+                    error = ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage))
+                };
 
-                return Conflict(new { message = "Sorry, the Username has been used" });
+                //viewmodel validation failed
+                return BadRequest(error);
             }
-
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateUser(User user)
+        public async Task<IActionResult> UpdateUser(BackEndUpdateUser backEndUpdateUser)
         {
-            _db.Entry(user).State = EntityState.Modified;
-
-            try
+            //failed to validate
+            if (!ModelState.IsValid)
             {
-                await _db.SaveChangesAsync();
+                var error = new
+                {
+                    message = "The request is invalid.",
+                    error = ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage))
+                };
+
+                //viewmodel validation failed
+                return BadRequest(error);
             }
-            catch (DbUpdateConcurrencyException)
+            else
             {
-                return NotFound();
+                //update user
+
+                var user = _db.Users.Where(m => m.UserId == backEndUpdateUser.UserId).FirstOrDefault();
+
+                //cant find user by ID
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    string salt = string.Empty;
+
+                    string encryptPassword = SecurityHelper.EncryptPassword(backEndUpdateUser.Password, out salt);
+
+                    //map viewmodel to dbmodel
+
+                    #region
+                    user.Salt = salt;
+
+                    user.Password = encryptPassword;
+
+                    user.Firstname = backEndUpdateUser.Firstname;
+
+                    user.Lastname = backEndUpdateUser.Lastname;
+
+                    user.DateOfBirth = backEndUpdateUser.DateOfBirth;
+
+                    user.Email = backEndUpdateUser.Email;
+
+                    user.Phone = backEndUpdateUser.Phone;
+
+                    user.Mobile = backEndUpdateUser.Mobile;
+
+                    #endregion
+
+                    _db.Entry(user).State = EntityState.Modified;
+
+                    try
+                    {
+                        await _db.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        return NotFound();
+                    }
+
+                    return NoContent();
+                }
+
             }
 
-            return NoContent();
         }
 
 
@@ -100,8 +186,9 @@ namespace CorePractice.Controllers
 
         [HttpPost]
         [Route("Group")]
-        public async Task<IActionResult> SetUserGroups(int id)
+        public async Task<IActionResult> SetUserGroups(int id, List<Group> groups)
         {
+            var user = _db.Users.Where(m => m.UserId == id).FirstOrDefault();
 
 
             return Ok();

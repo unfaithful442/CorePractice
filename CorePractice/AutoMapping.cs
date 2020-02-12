@@ -12,6 +12,8 @@ namespace CorePractice
     {
         public AutoMapping()
         {
+            //config viewmodel to model
+            CreateMap<BackEndCreateUser, User>().ForMember(dest => dest.Password, src => src.Ignore()).ForMember(dest => dest.Salt, src => src.Ignore());
 
         }
     }
