@@ -34,11 +34,13 @@ namespace CorePractice.Controllers
 
 
         [HttpGet]
-        public IActionResult GetGroups()
+        public IActionResult GetGroups([FromQuery]int pageSize, [FromQuery]int pageNumber)
         {
             var Group = _db.Groups.OrderBy(m => m.GroupId).ToList();
 
-            return Ok(Group);
+            var selectedGroup = Group.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            return Ok(selectedGroup);
         }
 
         [HttpPost]

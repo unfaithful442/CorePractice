@@ -36,11 +36,13 @@ namespace CorePractice.Controllers
 
 
         [HttpGet]
-        public IActionResult GetUsers()
+        public IActionResult GetUsers([FromQuery]int pageSize, [FromQuery]int pageNumber)
         {
             var Users = _db.Users.OrderBy(m => m.UserId).ToList();
 
-            return Ok(Users);
+            var selectedUser = Users.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            return Ok(selectedUser);
         }
 
         [HttpPost]
