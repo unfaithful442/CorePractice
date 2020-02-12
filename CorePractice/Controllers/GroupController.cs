@@ -73,7 +73,7 @@ namespace CorePractice.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateGroup(Group group)
+        public async Task<IActionResult> UpdateGroup(BackEndUpdateGroup backEndUpdateGroup)
         {
             //viewmodel failed to validate
             if (!ModelState.IsValid)
@@ -89,6 +89,12 @@ namespace CorePractice.Controllers
             }
             else
             {
+                var group = _db.Groups.Where(m => m.GroupId == backEndUpdateGroup.GroupId).FirstOrDefault();
+
+                group.GroupName = backEndUpdateGroup.GroupName;
+
+                group.Description = backEndUpdateGroup.Description;
+
                 _db.Entry(group).State = EntityState.Modified;
 
                 try

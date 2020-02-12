@@ -36,6 +36,7 @@ namespace CorePractice.Controllers
 
 
         [HttpGet]
+
         public IActionResult GetUsers([FromQuery]int pageSize, [FromQuery]int pageNumber)
         {
             var Users = _db.Users.OrderBy(m => m.UserId).ToList();
@@ -55,7 +56,7 @@ namespace CorePractice.Controllers
                 var dbuser = _db.Users.Where(u => u.Username == backEndCreateUser.Username).FirstOrDefault();
 
                 //username doesnt exist
-                if (dbuser != null)
+                if (dbuser == null)
                 {
                     //encrypt pwd with salt
 
@@ -187,8 +188,8 @@ namespace CorePractice.Controllers
         }
 
         [HttpPut]
-        [Route("Group")]
-        public async Task<IActionResult> SetUserGroup(int userId, Group group)
+        [Route("Group/{userId:int}")]
+        public async Task<IActionResult> SetUserGroup(int userId, BackEndUpdateGroup group)
         {
 
             var groupUser = _db.UserGroups.Where(m => m.UserId == userId && m.GroupId == group.GroupId).FirstOrDefault();
@@ -229,6 +230,28 @@ namespace CorePractice.Controllers
             await _db.SaveChangesAsync();
 
             return Ok(UserGroups);
+        }
+
+
+        [HttpGet]
+        [Route("/api/SearchUser")]
+        public IActionResult SearchUser([FromQuery]string searchBy, [FromQuery]string search)
+        {
+            var Users = _db.Users.OrderBy(m => m.UserId).ToList();
+
+
+            switch (searchBy)
+            {
+                case "Firstname": return Ok(Users.Where(m => m.Firstname.Contains(search)).ToList());
+                case "Lastname": return Ok(Users.Where(m => m.Lastname.Contains(search)).ToList());
+                case "DateOfBirth": return Ok(Users.Where(m => m.DateOfBirth == Convert.ToDateTime(search)).ToList());
+                case "Email": return Ok(Users.Where(m => m.Email.Contains(search)).ToList());
+                case "Phone": return Ok(Users.Where(m => m.Phone.Contains(search)).ToList());
+                case "Mobile": return Ok(Users.Where(m => m.Mobile.Contains(search)).ToList());
+                default: return Ok(Users);
+            }
+
+
         }
     }
 }

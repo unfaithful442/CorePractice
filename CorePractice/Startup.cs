@@ -34,11 +34,12 @@ namespace CorePractice
             //add memory cache
             services.AddMemoryCache();
 
-          
+            //inject db context
             services.AddDbContext<CorePracticeDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("CoreSampleDatabase"));
             });
+
             //inject automapper
             services.AddAutoMapper(typeof(Startup));
         }
