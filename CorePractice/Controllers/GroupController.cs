@@ -44,29 +44,63 @@ namespace CorePractice.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateGroup(BackEndCreateGroup backEndCreateGroup)
         {
+            //viewmodel failed to validate
+            if (!ModelState.IsValid)
+            {
+                var error = new
+                {
+                    message = "The request is invalid.",
+                    error = ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage))
+                };
 
-            _db.Groups.Add(group);
+                //viewmodel validation failed
+                return BadRequest(error);
+            }
+            else
+            {
 
-            await _db.SaveChangesAsync();
+                var group = _mapper.Map<BackEndCreateGroup, Group>(backEndCreateGroup);
 
-            return CreatedAtAction(nameof(CreateGroup), group);
+                _db.Groups.Add(group);
+
+                await _db.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(CreateGroup), group);
+            }
+
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateGroup(Group group)
         {
-            _db.Entry(group).State = EntityState.Modified;
-
-            try
+            //viewmodel failed to validate
+            if (!ModelState.IsValid)
             {
-                await _db.SaveChangesAsync();
+                var error = new
+                {
+                    message = "The request is invalid.",
+                    error = ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage))
+                };
+
+                //viewmodel validation failed
+                return BadRequest(error);
             }
-            catch (DbUpdateConcurrencyException)
+            else
             {
-                return NotFound();
+                _db.Entry(group).State = EntityState.Modified;
+
+                try
+                {
+                    await _db.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return NotFound();
+                }
+
+                return NoContent();
             }
 
-            return NoContent();
         }
 
 

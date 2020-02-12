@@ -15,7 +15,9 @@ namespace CorePractice
             //config viewmodel to model
             CreateMap<BackEndCreateUser, User>().ForMember(dest => dest.Password, src => src.Ignore()).ForMember(dest => dest.Salt, src => src.Ignore());
 
+            CreateMap<BackEndUpdateGroup, Group>();
 
+            CreateMap<BackEndCreateGroup, Group>();
         }
     }
 }
