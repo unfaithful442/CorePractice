@@ -184,14 +184,35 @@ namespace CorePractice.Controllers
             return Ok(User);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("Group")]
-        public async Task<IActionResult> SetUserGroups(int id, List<Group> groups)
+        public async Task<IActionResult> SetUserGroup(int userId, Group group)
         {
-            var user = _db.Users.Where(m => m.UserId == id).FirstOrDefault();
+
+            var groupUser = _db.UserGroups.Where(m => m.UserId == userId && m.GroupId == group.GroupId).FirstOrDefault();
+
+            if (groupUser != null)
+            {
+                //user already have this group
+
+                return Conflict(new { message = "The User is already in the group" });
+            }
+            else
+            {
+                UserGroup userGroup = new UserGroup();
+
+                userGroup.UserId = userId;
+
+                userGroup.GroupId = group.GroupId;
+
+                _db.UserGroups.Add(userGroup);
+
+                await _db.SaveChangesAsync();
+
+                return NoContent();
+            }
 
 
-            return Ok();
         }
 
 

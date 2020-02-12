@@ -42,8 +42,9 @@ namespace CorePractice.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateGroup(Group group)
+        public async Task<IActionResult> CreateGroup(BackEndCreateGroup backEndCreateGroup)
         {
+
             _db.Groups.Add(group);
 
             await _db.SaveChangesAsync();

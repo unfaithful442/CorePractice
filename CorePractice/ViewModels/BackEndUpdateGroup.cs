@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace CorePractice.ViewModels
 {
-    public class BackEndCreateGroup
+    public class BackEndUpdateGroup
     {
+        [Required(ErrorMessage = "GroupId is required")]
+        public int GroupId { get; set; }
+
         [Required(AllowEmptyStrings = false, ErrorMessage = "GroupName is reuqired")]
         [StringLength(50, ErrorMessage = "The GroupName cannot be longer than 50 characters")]
         public string GroupName { get; set; }
