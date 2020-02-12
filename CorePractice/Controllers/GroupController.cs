@@ -34,7 +34,7 @@ namespace CorePractice.Controllers
 
 
         [HttpGet]
-        public IActionResult GetGroups([FromQuery]int pageSize, [FromQuery]int pageNumber)
+        public IActionResult GetGroups([FromQuery]int pageSize = 10, [FromQuery]int pageNumber=1)
         {
             var Group = _db.Groups.OrderBy(m => m.GroupId).ToList();
 

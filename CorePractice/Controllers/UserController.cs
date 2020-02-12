@@ -37,7 +37,7 @@ namespace CorePractice.Controllers
 
         [HttpGet]
 
-        public IActionResult GetUsers([FromQuery]int pageSize, [FromQuery]int pageNumber)
+        public IActionResult GetUsers([FromQuery]int pageSize = 10, [FromQuery]int pageNumber = 1)
         {
             var Users = _db.Users.OrderBy(m => m.UserId).ToList();
 
