@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CorePractice.ViewModels
 {
-    public class BackEndUser
+    public class BackEndCreateUser
     {
 
     }

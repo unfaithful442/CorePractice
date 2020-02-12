@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CorePractice.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +19,15 @@ namespace CorePractice.Controllers
 
         private CorePracticeDbContext _db;
 
+        private IMapper _mapper;
         //inject db context and memory cache
-        public GroupController(IMemoryCache cache, CorePracticeDbContext db)
+        public GroupController(IMemoryCache cache, CorePracticeDbContext db, IMapper mapper)
         {
             _cache = cache;
 
             _db = db;
+
+            _mapper = mapper;
         }
 
 

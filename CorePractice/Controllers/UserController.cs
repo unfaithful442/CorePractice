@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CorePractice.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,14 @@ namespace CorePractice.Controllers
 
         private CorePracticeDbContext _db;
 
-        public UserController(IMemoryCache cache, CorePracticeDbContext db)
+        private IMapper _mapper;
+        public UserController(IMemoryCache cache, CorePracticeDbContext db, IMapper mapper)
         {
             _cache = cache;
 
             _db = db;
+
+            _mapper = mapper;
         }
 
 
